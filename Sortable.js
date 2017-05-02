@@ -596,7 +596,7 @@
 					options = this.options,
 					ghostRect;
 
-				ghostEl = dragEl.cloneNode(true);
+				ghostEl = _clone(dragEl, options.forcePolymer);
 
 				_toggleClass(ghostEl, options.ghostClass, false);
 				_toggleClass(ghostEl, options.fallbackClass, true);
@@ -627,7 +627,7 @@
 			this._offUpEvents();
 
 			if (activeGroup.checkPull(this, this, dragEl, evt)) {
-				cloneEl = _clone(dragEl);
+				cloneEl = _clone(dragEl, options.forcePolymer);
 
 				cloneEl.draggable = false;
 				cloneEl.style['will-change'] = '';
@@ -887,11 +887,11 @@
 					!options.dropBubble && evt.stopPropagation();
 				}
 
-				ghostEl && ghostEl.parentNode.removeChild(ghostEl);
+				ghostEl && ghostEl.parentNode && ghostEl.parentNode.removeChild(ghostEl);
 
 				if (rootEl === parentEl || Sortable.active.lastPullMode !== 'clone') {
 					// Remove clone
-					cloneEl && cloneEl.parentNode.removeChild(cloneEl);
+					cloneEl && cloneEl.parentNode && cloneEl.parentNode.removeChild(cloneEl);
 				}
 
 				if (dragEl) {
@@ -1410,13 +1410,14 @@
 		return dst;
 	}
 
-	function _clone(el) {
-		return $
-			? $(el).clone(true)[0]
-			: (Polymer && Polymer.dom
-				? Polymer.dom(el).cloneNode(true)
-				: el.cloneNode(true)
-			);
+	function _clone(el, bForcePolymer) {
+	  if(bForcePolymer && Polymer && Polymer.dom) {
+	    return Polymer.dom(el).cloneNode(true);
+	  }
+	  if($) {
+	    return $(el).clone(true)[0];
+	  }
+	  return el.cloneNode(true);
 	}
 
 	function _saveInputCheckedState(root) {
