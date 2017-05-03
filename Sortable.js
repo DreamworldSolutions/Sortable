@@ -8,7 +8,7 @@
 	"use strict";
 
 	if (typeof define === "function" && define.amd) {
-		define(factory);
+	  define("Sortable", [], factory);
 	}
 	else if (typeof module != "undefined" && typeof module.exports != "undefined") {
 		module.exports = factory();
