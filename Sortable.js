@@ -597,6 +597,14 @@
 					ghostRect;
 
 				ghostEl = _clone(dragEl, options.forcePolymer);
+				//Set property on ghost element from drag element if 'forcePolymer' is true
+				if(options.forcePolymer) {
+	        for(var key in dragEl.properties) {
+	          try {
+	            ghostEl.set(key, dragEl[key]);
+	          }catch(e) {}
+	        }
+	      }
 
 				_toggleClass(ghostEl, options.ghostClass, false);
 				_toggleClass(ghostEl, options.fallbackClass, true);
@@ -611,12 +619,11 @@
 				_css(ghostEl, 'zIndex', '100000');
 				_css(ghostEl, 'pointerEvents', 'none');
 
-				options.fallbackOnBody && document.body.appendChild(ghostEl) || rootEl.appendChild(ghostEl);
-
-				// Fixing dimensions.
-				ghostRect = ghostEl.getBoundingClientRect();
-				_css(ghostEl, 'width', rect.width * 2 - ghostRect.width);
-				_css(ghostEl, 'height', rect.height * 2 - ghostRect.height);
+				if(options.forcePolymer) {
+				  options.facllbackOnBody && Polymer.dom(body).appendChild(ghostEl) || Polymer.dom(rootEl).appendChild(ghostEl);
+				}else {
+				  options.fallbackOnBody && document.body.appendChild(ghostEl) || rootEl.appendChild(ghostEl);
+				}
 			}
 		},
 
@@ -887,7 +894,11 @@
 					!options.dropBubble && evt.stopPropagation();
 				}
 
-				ghostEl && ghostEl.parentNode && ghostEl.parentNode.removeChild(ghostEl);
+				if(options.forcePolymer) {
+				  ghostEl && Polymer.dom(ghostEl.parentNode) && Polymer.dom(ghostEl.parentNode).removeChild(ghostEl);
+				}else {
+				  ghostEl && ghostEl.parentNode && ghostEl.parentNode.removeChild(ghostEl);
+				}
 
 				if (rootEl === parentEl || Sortable.active.lastPullMode !== 'clone') {
 					// Remove clone
