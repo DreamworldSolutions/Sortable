@@ -859,10 +859,14 @@
 		},
 
 		_offUpEvents: function () {
-			var ownerDocument = this.el.ownerDocument;
-
 			_off(document, 'touchmove', this._onTouchMove);
 			_off(document, 'pointermove', this._onTouchMove);
+			
+			if(!this.el) {
+			    return;
+			}
+			
+			var ownerDocument = this.el.ownerDocument;
 			_off(ownerDocument, 'mouseup', this._onDrop);
 			_off(ownerDocument, 'touchend', this._onDrop);
 			_off(ownerDocument, 'pointerup', this._onDrop);
@@ -1191,12 +1195,12 @@
 
 
 	function _on(el, event, fn) {
-		el.addEventListener(event, fn, captureMode);
+	    el && el.addEventListener(event, fn, captureMode);
 	}
 
 
 	function _off(el, event, fn) {
-		el.removeEventListener(event, fn, captureMode);
+	    el && el.removeEventListener(event, fn, captureMode);
 	}
 
 
